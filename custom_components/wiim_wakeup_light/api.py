@@ -184,11 +184,21 @@ def parse_last_change(last_change: str) -> WiimWakeUpLightState | None:
     if not last_change or not last_change.strip():
         return None
 
+    nested_xml = last_change.strip()
     try:
-        nested_xml = unescape(last_change.strip())
         root = DET.fromstring(nested_xml)
     except (DET.ParseError, ValueError):
-        return None
+        # Some callers hand us the still-escaped value from the outer UPnP XML,
+        # while async-upnp-client has already decoded that outer layer. Parse the
+        # decoded value first so &quot; remains safe inside double-quoted XML
+        # attributes, then fall back to removing exactly one outer escape layer.
+        decoded_xml = unescape(nested_xml)
+        if decoded_xml == nested_xml:
+            return None
+        try:
+            root = DET.fromstring(decoded_xml)
+        except (DET.ParseError, ValueError):
+            return None
 
     change_value: str | None = None
     info_value: str | None = None
@@ -203,9 +213,16 @@ def parse_last_change(last_change: str) -> WiimWakeUpLightState | None:
         return None
 
     try:
-        payload = json.loads(unescape(info_value))
+        payload = json.loads(info_value)
+    except (JSONDecodeError, TypeError):
+        try:
+            payload = json.loads(unescape(info_value))
+        except (JSONDecodeError, TypeError):
+            return None
+
+    try:
         return parse_light_state(payload)
-    except (JSONDecodeError, WiimWakeUpLightInvalidResponse, TypeError):
+    except WiimWakeUpLightInvalidResponse:
         return None
 
 
@@ -375,8 +392,15 @@ class WiimWakeUpLightApi:
 
     async def _async_post_command(self, command: str) -> None:
         """Send a command through the wakeuplight POST endpoint."""
+        # The firmware describes this endpoint as form encoded but does not decode
+        # percent escapes. Passing a mapping to aiohttp changes ':' to '%3A' and
+        # the lamp responds with plain text "unknown command". Send the simple
+        # one-field body verbatim while retaining the expected content type.
         text = await self._async_request_text(
-            "POST", self._post_url, data={"command": command}
+            "POST",
+            self._post_url,
+            data=f"command={command}",
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         try:
             payload = json.loads(text)

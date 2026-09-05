@@ -80,7 +80,6 @@ async def async_setup_entry(
         subscription=subscription,
     )
     domain_data.entries.add(entry.entry_id)
-    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -99,10 +98,3 @@ async def async_unload_entry(
         await domain_data.event_manager.async_close()
         hass.data.pop(DOMAIN, None)
     return True
-
-
-async def _async_update_listener(
-    hass: HomeAssistant, entry: WiimWakeUpLightConfigEntry
-) -> None:
-    """Reload after reconfiguration or a discovered address update."""
-    await hass.config_entries.async_reload(entry.entry_id)

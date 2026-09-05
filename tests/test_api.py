@@ -124,7 +124,7 @@ def test_plain_turn_on_uses_power_command() -> None:
 
 
 @pytest.mark.asyncio
-async def test_effect_and_rgb_wire_commands() -> None:
+async def test_effect_and_rgb_wire_commands_keep_literal_colons() -> None:
     session = FakeSession('{"state": 0}', '{"state": "0"}')
     api = WiimWakeUpLightApi(session, "192.0.2.1")  # type: ignore[arg-type]
 
@@ -132,10 +132,15 @@ async def test_effect_and_rgb_wire_commands() -> None:
     await api.async_set_rgb((0, 1, 255))
 
     assert session.requests[0][0] == "POST"
-    assert session.requests[0][2]["data"] == {
-        "command": "enterLightMode:14:speed:10:duration:1:style:1"
+    assert session.requests[0][2]["data"] == (
+        "command=enterLightMode:14:speed:10:duration:1:style:1"
+    )
+    assert session.requests[0][2]["headers"] == {
+        "Content-Type": "application/x-www-form-urlencoded"
     }
-    assert session.requests[1][2]["data"] == {"command": "setLightDisplayColor:0001ff"}
+    assert session.requests[1][2]["data"] == (
+        "command=setLightDisplayColor:0001ff"
+    )
 
 
 @pytest.mark.asyncio

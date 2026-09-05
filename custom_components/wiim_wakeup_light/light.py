@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import replace
 from typing import Any, ClassVar
 
@@ -30,6 +31,8 @@ from .api import (
 from .const import DOMAIN, EFFECTS, OFFICIAL_WIIM_DOMAIN
 from .coordinator import WiimWakeUpLightCoordinator
 from .models import WiimWakeUpLightRuntimeData, WiimWakeUpLightState
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -137,6 +140,7 @@ class WiimWakeUpLightEntity(CoordinatorEntity[WiimWakeUpLightCoordinator], Light
                         is_on=bool(command.value)
                     )
         except (ValueError, WiimWakeUpLightError) as err:
+            _LOGGER.debug("Turn-on command failed: %s", err)
             await self.coordinator.async_request_refresh()
             raise HomeAssistantError(
                 translation_domain=DOMAIN,
@@ -159,6 +163,7 @@ class WiimWakeUpLightEntity(CoordinatorEntity[WiimWakeUpLightCoordinator], Light
         try:
             await self.coordinator.api.async_set_power(is_on=False)
         except WiimWakeUpLightError as err:
+            _LOGGER.debug("Turn-off command failed: %s", err)
             await self.coordinator.async_request_refresh()
             raise HomeAssistantError(
                 translation_domain=DOMAIN,
