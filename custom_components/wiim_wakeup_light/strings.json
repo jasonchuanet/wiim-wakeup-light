@@ -1,0 +1,53 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This WiiM Wake-up Light is already configured.",
+      "not_supported": "The discovered LinkPlay device is not a WiiM Wake-up Light.",
+      "reconfigure_successful": "The WiiM Wake-up Light address was updated."
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the WiiM Wake-up Light.",
+      "invalid_host": "Enter a host name or IP address, not a URL.",
+      "invalid_response": "The device returned an invalid light response.",
+      "not_supported": "This LinkPlay device does not advertise WiiM Wake-up Light support."
+    },
+    "step": {
+      "discovery_confirm": {
+        "description": "Set up the discovered {name}?",
+        "title": "Discovered WiiM Wake-up Light"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Host"
+        },
+        "description": "Update the local address for this lamp.",
+        "title": "Reconfigure WiiM Wake-up Light"
+      },
+      "user": {
+        "data": {
+          "host": "Host"
+        },
+        "description": "Enter the local host name or IP address of the lamp. No cloud account or API key is used.",
+        "title": "Connect to a WiiM Wake-up Light"
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "light": {
+        "name": "Light"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Failed to {command} the WiiM Wake-up Light."
+    },
+    "not_supported": {
+      "message": "This device is not a WiiM Wake-up Light."
+    },
+    "unknown_effect": {
+      "message": "{effect} is not a supported WiiM Wake-up Light effect."
+    }
+  }
+}
