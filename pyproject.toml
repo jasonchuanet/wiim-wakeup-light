@@ -1,13 +1,13 @@
 [project]
 name = "wiim-wakeup-light"
-version = "0.1.0"
+version = "0.1.2"
 description = "Home Assistant custom integration for the WiiM Wake-up Light"
 requires-python = ">=3.13"
-dependencies = ["async-upnp-client==0.48.1"]
+dependencies = ["async-upnp-client==0.48.2"]
 
 [dependency-groups]
 test = [
-  "homeassistant==2026.8.3",
+  "homeassistant==2026.10.0b0",
   "pytest>=8.3,<10",
   "pytest-asyncio>=0.25,<2",
   "ruff>=0.12,<1",

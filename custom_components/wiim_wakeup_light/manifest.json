@@ -1,7 +1,7 @@
 {
   "domain": "wiim_wakeup_light",
   "name": "WiiM Wake-up Light",
-  "after_dependencies": ["wiim"],
+  "after_dependencies": ["upnp", "wiim"],
   "codeowners": ["@jasonchuanet"],
   "config_flow": true,
   "dependencies": ["network"],
@@ -10,7 +10,6 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/jasonchuanet/wiim-wakeup-light/issues",
   "loggers": ["async_upnp_client"],
-  "requirements": ["async-upnp-client==0.48.1"],
-  "version": "0.1.1",
+  "version": "0.1.2",
   "zeroconf": ["_linkplay._tcp.local."]
 }
